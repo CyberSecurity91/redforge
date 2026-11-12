@@ -1,0 +1,94 @@
+# RedForge — single-service stack.
+#
+#   docker compose up -d --build      build and start on http://localhost:8080
+#   docker compose logs -f            follow nginx access logs
+#   docker compose down               stop and remove
+#
+# There is deliberately no database, cache or proxy service: every tool runs
+# in the browser, so the only container needed is the static web server.
+
+name: redforge
+
+services:
+  redforge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Build-time knobs. Vite bakes these into the bundle, so a change here
+        # requires `docker compose build --no-cache`.
+        NODE_ENV: production
+    image: redforge:latest
+    container_name: redforge
+    restart: unless-stopped
+
+    ports:
+      - "${REDFORGE_PORT:-8080}:8080"
+
+    environment:
+      TZ: "${TZ:-Europe/London}"
+
+    # The container serves read-only content and writes nothing but logs, so
+    # the root filesystem can be locked down entirely.
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+      - /var/cache/nginx:size=16m
+      - /var/run:size=1m
+
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 128M
+        reservations:
+          memory: 32M
+
+  # ---------------------------------------------------------------------------
+  # Optional: development server with hot reload, `docker compose up dev`.
+  # It is behind a profile so a plain `docker compose up` only starts the
+  # production container.
+  # ---------------------------------------------------------------------------
+  dev:
+    profiles: ["dev"]
+    image: node:22-alpine
+    container_name: redforge-dev
+    working_dir: /app
+    command: >
+      sh -c "npm ci --ignore-scripts --no-audit --no-fund &&
+             npm run dev -- --host 0.0.0.0 --port 5178"
+    ports:
+      - "${REDFORGE_DEV_PORT:-5178}:5178"
+    volumes:
+      - .:/app
+      - redforge-node-modules:/app/node_modules
+    environment:
+      TZ: "${TZ:-Europe/London}"
+      CHOKIDAR_USEPOLLING: "true"
+    init: true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  redforge-node-modules:

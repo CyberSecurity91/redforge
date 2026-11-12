@@ -1,0 +1,25 @@
+# dependencies (reinstalled inside the image from the lockfile)
+node_modules
+**/node_modules
+
+# build output (the image builds its own)
+dist
+**/dist
+
+# tooling caches
+.vite
+node_modules/.vite
+*.tsbuildinfo
+.probe
+
+# VCS / editor / OS noise
+.git
+.gitignore
+.github
+.vscode
+.idea
+.DS_Store
+
+# docs and local logs that are not needed for the build
+*.log
+npm-debug.log*

@@ -1,0 +1,179 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── Theme tokens ───────────────────────────────────────────────────────────
+   Mirrors the it-tools three-layer approach: a neutral surface stack, a single
+   accent colour, and a mono stack for every piece of machine text.            */
+@theme {
+  --color-accent: #e11d2a;
+  --color-accent-hover: #f23542;
+  --color-accent-pressed: #a51220;
+
+  --font-sans: 'Inter var', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+}
+
+:root {
+  --body: #f1f5f9;
+  --sider: #ffffff;
+  --sider-border: #e2e8f0;
+  --card: #ffffff;
+  --card-border: #e6e9ef;
+  --card-hover-border: var(--color-accent);
+  --input: #f7f8fa;
+  --input-border: #dcdfe6;
+  --text: #333639;
+  --text-muted: #767c82;
+  --text-faint: #9aa0a8;
+  --accent: var(--color-accent);
+  --accent-faded: rgb(225 29 42 / 0.08);
+  --neutral-btn: rgb(46 51 56 / 0.05);
+  --neutral-btn-hover: rgb(46 51 56 / 0.09);
+  --ko: #b91c1c;
+  --ok: #15803d;
+  --warn: #b45309;
+  --info: #1d4ed8;
+  color-scheme: light;
+}
+
+.dark {
+  --body: #17181a;
+  --sider: #1d1e20;
+  --sider-border: #24262a;
+  --card: #202124;
+  --card-border: #2a2c30;
+  --input: #1a1b1d;
+  --input-border: #33363b;
+  --text: #ffffffd1;
+  --text-muted: #ffffff80;
+  --text-faint: #ffffff4d;
+  --accent: #e5484d;
+  --accent-hover: #f0595e;
+  --accent-pressed: #c9353a;
+  --accent-faded: rgb(229 72 77 / 0.14);
+  --neutral-btn: rgb(255 255 255 / 0.08);
+  --neutral-btn-hover: rgb(255 255 255 / 0.12);
+  --ko: #f4737f;
+  --ok: #4ade80;
+  --warn: #fbbf24;
+  --info: #7aa2ff;
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--body);
+  color: var(--text);
+  font-family: var(--theme-font, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Thin, unobtrusive scrollbars (sider + panels) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sider-border) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--sider-border);
+  border-radius: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tool-textarea {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  tab-size: 2;
+}
+
+@keyframes rf-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rf-fade-up {
+  animation: rf-fade-up 0.18s ease-out both;
+}
+
+@keyframes rf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.rf-spin {
+  animation: rf-spin 0.9s linear infinite;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+/* Machine text (payloads, hashes, command lines) */
+.rf-mono {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  font-variant-ligatures: none;
+}
+
+/* Sidebar nav rows: reset the default anchor colour so hover wins */
+.rf-nav-item {
+  text-decoration: none;
+}
+
+/* Range slider */
+.rf-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--input-border);
+  outline: none;
+}
+.rf-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 13px;
+  width: 13px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: none;
+}
+.rf-range::-moz-range-thumb {
+  height: 13px;
+  width: 13px;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+}
+
+/* Native dialog backdrop */
+.rf-dialog::backdrop {
+  background: rgb(0 0 0 / 0.5);
+}

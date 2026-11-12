@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+*.tsbuildinfo
+
+# vite / tooling caches
+.vite/
+node_modules/.vite/
+
+# test artefacts
+playwright-report/
+test-results/
+screenshots/
+
+# local scratch
+.probe/
+*.local
+
+# editor / OS noise
+.DS_Store
+.vscode/
+.idea/
+
+# logs
+*.log
+npm-debug.log*
